@@ -16,12 +16,26 @@ jobs:
           curl -L --fail --retry 5 --retry-delay 2 \
             -o ggml-large-v3-turbo-q5_0.bin \
             'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3-turbo-q5_0.bin?download=true'
-          ls -lh ggml-large-v3-turbo-q5_0.bin
-          sha256sum ggml-large-v3-turbo-q5_0.bin
-      - name: Upload model as Actions artifact
+          sha256sum ggml-large-v3-turbo-q5_0.bin > model.sha256
+          split -b 287000000 -d -a 2 ggml-large-v3-turbo-q5_0.bin model-part-
+          ls -lh model-part-* model.sha256
+      - name: Upload model part 00
         uses: actions/upload-artifact@v4
         with:
-          name: whisper-model-large-v3-turbo-q5_0
-          path: ggml-large-v3-turbo-q5_0.bin
+          name: whisper-model-part-00
+          path: model-part-00
           compression-level: 0
+          retention-days: 1
+      - name: Upload model part 01
+        uses: actions/upload-artifact@v4
+        with:
+          name: whisper-model-part-01
+          path: model-part-01
+          compression-level: 0
+          retention-days: 1
+      - name: Upload checksum
+        uses: actions/upload-artifact@v4
+        with:
+          name: whisper-model-sha256
+          path: model.sha256
           retention-days: 1
