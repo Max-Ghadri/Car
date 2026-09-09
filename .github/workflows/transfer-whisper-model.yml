@@ -7,23 +7,22 @@ on:
 jobs:
   download-and-package:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
     steps:
-      - name: Download Whisper Small Q5 multilingual model
+      - name: Download Silero VAD model for whisper.cpp
         shell: bash
         run: |
           set -euo pipefail
           curl -L --fail --retry 5 --retry-delay 2 \
-            -o ggml-small-q5_1.bin \
-            'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small-q5_1.bin?download=true'
-          sha256sum ggml-small-q5_1.bin > small.sha256
-          ls -lh ggml-small-q5_1.bin small.sha256
-      - name: Upload model
+            -o ggml-silero-v6.2.0.bin \
+            'https://huggingface.co/ggml-org/whisper-vad/resolve/main/ggml-silero-v6.2.0.bin?download=true'
+          sha256sum ggml-silero-v6.2.0.bin > vad.sha256
+          ls -lh ggml-silero-v6.2.0.bin vad.sha256
+      - name: Upload VAD model
         uses: actions/upload-artifact@v4
         with:
-          name: whisper-small-q5_1
+          name: whisper-silero-vad-v6.2.0
           path: |
-            ggml-small-q5_1.bin
-            small.sha256
-          compression-level: 0
+            ggml-silero-v6.2.0.bin
+            vad.sha256
           retention-days: 1
